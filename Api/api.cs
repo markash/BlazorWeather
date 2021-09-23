@@ -12,7 +12,7 @@ namespace Weather.Function
 {
     public static class api
     {
-        [FunctionName("api")]
+        [FunctionName("CurrentConsitions")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)

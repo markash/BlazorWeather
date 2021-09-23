@@ -7,7 +7,7 @@
 @using System.Threading.Tasks
 @inject HttpClient Http
 
-@using app;
+@using Client;
 @inject WeatherService weatherService;
 
 @page "/"
@@ -48,7 +48,7 @@
 
         System.Console.WriteLine(Http.BaseAddress);
 
-        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/api?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConsitions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
         System.Console.WriteLine(currentConditions);
     }
 
