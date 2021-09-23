@@ -1,7 +1,91 @@
-﻿@page "/"
+﻿@inject IJSRuntime jsRuntime;
+@using BrowserInterop.Extensions;
+@using BrowserInterop.Geolocation;
 
-<h1>Hello, world!</h1>
+@using app;
+@inject WeatherService weatherService;
 
-Welcome to your new app.
+@page "/"
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <MudPaper Class="pa-16 ma-2" Elevation="0" >
+        <MudContainer id="temperature" MaxWidth="MaxWidth.Small">
+            <img src="@IconImage" />
+            <h2>@Temperature</h2>    
+            <div>
+                <span>@Phrase</span>
+            </div>
+            <div>
+                <span>@UpdatedDateTime</span>
+            </div>
+            <button type="button" @onclick="GetLocationPositionAsync">Update Location</button>
+        </MudContainer>
+    </MudPaper>
+
+
+
+
+@if (geolocationPosition != null)
+{
+    <h5>Location: @geolocationPosition.Coords.Latitude, @geolocationPosition.Coords.Longitude Accuracy: @geolocationPosition.Coords.Accuracy m</h5>
+}
+
+@code 
+{
+    private WindowNavigatorGeolocation geolocation;
+    private GeolocationPosition geolocationPosition;
+
+    private CurrentConditions currentConditions;
+
+    protected override async Task OnInitializedAsync() 
+    {
+        await GetGeoLocationAsync();
+        await GetLocationPositionAsync();
+
+        currentConditions = await weatherService.GetCurrentConditionsAsync(geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude);
+    }
+
+    protected async Task GetGeoLocationAsync()
+    {
+        var window = await jsRuntime.Window();
+        var navigator = await window.Navigator();
+        geolocation = navigator.Geolocation;
+    } 
+
+    protected async Task GetLocationPositionAsync()
+    {
+        var options = new PositionOptions
+        {
+            EnableHighAccuracy = true,
+            MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+            TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+        };
+
+        geolocationPosition = (await geolocation.GetCurrentPosition(options)).Location;
+    }
+
+
+    protected string IconImage
+    {
+        get => currentConditions == null ? $"images/weather/1.png" : $"images/weather/{currentConditions.IconCode}.png";
+    }
+
+    protected string Temperature
+    {
+        get => currentConditions == null ? "" : $"{currentConditions.Temperature.Value}{TemperatureUnit}"; 
+    }
+
+    private string TemperatureUnit
+    {
+        get => "\u2103";
+    }
+
+    protected string Phrase
+    {
+        get => currentConditions?.Phrase;
+    }
+
+    protected string UpdatedDateTime
+    {
+        get => $"Updated as of {currentConditions?.DateTime:HH:mm}";
+    }
+}

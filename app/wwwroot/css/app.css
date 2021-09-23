@@ -1,0 +1,23 @@
+
+#temperature {
+    display: flow;
+    text-align: center;
+}
+
+#temperature h1 {
+    display: table-cell;
+    font-size: 5em;
+}
+
+#temperature h2 {
+    display: inline-block;
+    font-size: 5em;
+}
+
+#temperature img {
+    display: inline-block;
+}
+
+#temperature .row {
+    display: table-row;
+}
