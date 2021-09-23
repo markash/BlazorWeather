@@ -2,6 +2,11 @@
 @using BrowserInterop.Extensions;
 @using BrowserInterop.Geolocation;
 
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@inject HttpClient Http
+
 @using app;
 @inject WeatherService weatherService;
 
@@ -41,7 +46,10 @@
         await GetGeoLocationAsync();
         await GetLocationPositionAsync();
 
-        currentConditions = await weatherService.GetCurrentConditionsAsync(geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude);
+        System.Console.WriteLine(Http.BaseAddress);
+
+        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/api?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        System.Console.WriteLine(currentConditions);
     }
 
     protected async Task GetGeoLocationAsync()
