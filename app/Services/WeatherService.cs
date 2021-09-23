@@ -10,7 +10,7 @@ namespace app
         public async Task<CurrentConditions> GetCurrentConditionsAsync(double latitude, double longitude)
         {
             var httpClient = new HttpClient { BaseAddress = new Uri("https://atlas.microsoft.com/weather/") };
-            var response = await httpClient.GetFromJsonAsync<CurrentConditionsResponse>("currentConditions/json?api-version=1.0&query=-26.042754499999997,28.217563&subscription-key=pUozILgKIS41kgx5k-rZekusPDVy1rKQRxAUzHA5wAo");
+            var response = await httpClient.GetFromJsonAsync<CurrentConditionsResponse>("currentConditions/json?api-version=1.0&query=-26.042754499999997,28.217563&subscription-key=");
             return response.Results[0];
         }
     }
