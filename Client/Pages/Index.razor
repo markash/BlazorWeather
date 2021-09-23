@@ -48,7 +48,7 @@
 
         System.Console.WriteLine(Http.BaseAddress);
 
-        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConsitions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
         System.Console.WriteLine(currentConditions);
     }
 
