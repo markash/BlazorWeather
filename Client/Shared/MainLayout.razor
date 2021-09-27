@@ -8,9 +8,9 @@
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        My Application
+        Micro Weather
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawer @bind-Open="@drawerOpen" ClipMode="drawerClipMode">
         <NavMenu />
     </MudDrawer>
     <MudMainContent>
@@ -21,10 +21,11 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
+    bool drawerOpen = true;
+    DrawerClipMode drawerClipMode = DrawerClipMode.Always;
 
     void DrawerToggle()
     {
-        _drawerOpen = !_drawerOpen;
+        drawerOpen = !drawerOpen;
     }
 }

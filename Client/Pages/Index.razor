@@ -2,6 +2,7 @@
 @using BrowserInterop.Extensions;
 @using BrowserInterop.Geolocation;
 
+@using Data;
 @using System.Net.Http
 @using System.Net.Http.Json
 @using System.Threading.Tasks
@@ -11,6 +12,18 @@
 @inject WeatherService weatherService;
 
 @page "/"
+
+    <MudToolBar Style="@($"background-color:{Colors.Grey.Lighten4};")">
+        <MudText Typo="Typo.h6" >Forecast</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Outlined.Refresh" @onclick="UpdateAsync" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Favorite" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Pin" />
+        <MudSpacer />
+        <MudItem xs="12" sm="6" md="3" >
+            <MudTextField @bind-Value="searchText" Placeholder="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search" Variant="Variant.Text" />
+        </MudItem>
+    </MudToolBar>
 
     <MudPaper Class="pa-16 ma-2" Elevation="0" >
         <MudContainer id="temperature" MaxWidth="MaxWidth.Small">
@@ -22,7 +35,7 @@
             <div>
                 <span>@UpdatedDateTime</span>
             </div>
-            <button type="button" @onclick="GetLocationPositionAsync">Update Location</button>
+            <button type="button" @onclick="UpdateAsync">Update Location</button>
         </MudContainer>
     </MudPaper>
 
@@ -38,18 +51,14 @@
 {
     private WindowNavigatorGeolocation geolocation;
     private GeolocationPosition geolocationPosition;
-
     private CurrentConditions currentConditions;
+    private string searchText;
 
     protected override async Task OnInitializedAsync() 
     {
         await GetGeoLocationAsync();
         await GetLocationPositionAsync();
-
-        System.Console.WriteLine(Http.BaseAddress);
-
-        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
-        System.Console.WriteLine(currentConditions);
+        await GetCurrentConditionsAsync();
     }
 
     protected async Task GetGeoLocationAsync()
@@ -71,6 +80,16 @@
         geolocationPosition = (await geolocation.GetCurrentPosition(options)).Location;
     }
 
+    protected async Task GetCurrentConditionsAsync()
+    {
+        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+    }
+
+    protected async Task UpdateAsync()
+    {
+        await GetLocationPositionAsync();
+        await GetCurrentConditionsAsync();
+    }
 
     protected string IconImage
     {
@@ -79,7 +98,7 @@
 
     protected string Temperature
     {
-        get => currentConditions == null ? "" : $"{currentConditions.Temperature.Value}{TemperatureUnit}"; 
+        get => currentConditions == null ? $"--.-{TemperatureUnit}" : $"{currentConditions.Temperature.Value}{TemperatureUnit}"; 
     }
 
     private string TemperatureUnit
@@ -89,11 +108,11 @@
 
     protected string Phrase
     {
-        get => currentConditions?.Phrase;
+        get => currentConditions == null ? "--------------------" : $"{currentConditions.Phrase}";
     }
 
     protected string UpdatedDateTime
     {
-        get => $"Updated as of {currentConditions?.DateTime:HH:mm}";
+        get => $"Updated as of {(currentConditions ?? new CurrentConditions()).DateTime:HH:mm}";
     }
 }

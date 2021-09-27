@@ -119,5 +119,5 @@ dist
 local.setting*.json 
 
 
-Client/bin/**/*.*
-Client/obj/**/*.*
+**/bin/**/*.*
+**/obj/**/*.*
