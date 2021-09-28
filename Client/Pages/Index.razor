@@ -12,20 +12,14 @@
 @inject WeatherService weatherService;
 
 @page "/"
-    <img src="images/wallpaper/black_white_raindrop_leaf.jpg" class="bg">
 
-    <MudToolBar Style="@($"background-color:{Colors.Grey.Lighten4};opacity:0.2")">
-        <MudText Typo="Typo.h6">Forecast</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Outlined.Refresh" @onclick="UpdateAsync" />
-        @* <MudIconButton Icon="@Icons.Material.Outlined.Favorite" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Pin" /> *@
-        <MudSpacer />
-        
-        @* <MudItem xs="12" sm="6" md="3" >
-            <MudTextField @bind-Value="searchText" Placeholder="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Search" Variant="Variant.Text" />
-        </MudItem> *@
-    </MudToolBar>
+    <LayoutSetter>
+        <AppContextMenu>
+            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Color="Color.Inherit" Edge="Edge.End" @onclick="UpdateAsync" />
+        </AppContextMenu>
+    </LayoutSetter>
+
+    <img src="images/wallpaper/black_white_raindrop_leaf.jpg" class="bg">
 
     <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Lighten4};")">
         <img src="@IconImage" />
