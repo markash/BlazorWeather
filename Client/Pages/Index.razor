@@ -22,7 +22,6 @@
     <img src="images/wallpaper/black_white_raindrop_leaf.jpg" class="bg">
 
     <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Lighten4};")">
-
         @if (currentConditions == null)
         {
             <MudProgressCircular Color="Color.Default" Indeterminate="true"  />
@@ -43,7 +42,6 @@
             <button type="button" @onclick="UpdateAsync">Update Location</button>
         }
     </MudContainer>
-
 @code 
 {
     private WindowNavigatorGeolocation geolocation;
