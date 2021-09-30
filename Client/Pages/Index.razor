@@ -22,21 +22,26 @@
     <img src="images/wallpaper/black_white_raindrop_leaf.jpg" class="bg">
 
     <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Lighten4};")">
-        <img src="@IconImage" />
-        <h2>@Temperature</h2>    
-        <div>
-            <span>@Phrase</span>
-        </div>
-        <div>
-            <span>@UpdatedDateTime</span>
-        </div>
 
-        @if (geolocationPosition != null)
+        @if (currentConditions == null)
         {
-            <h5>Location: @geolocationPosition.Coords.Latitude, @geolocationPosition.Coords.Longitude Accuracy: @geolocationPosition.Coords.Accuracy m</h5>
-        }
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"  />
+        } 
+        else
+        {
+            <img src="@IconImage" />
+            <h2>@Temperature</h2>    
+            <div>
+                <span>@Phrase</span>
+            </div>
+            <div>
+                <span>@UpdatedDateTime</span>
+            </div>
 
-        <button type="button" @onclick="UpdateAsync">Update Location</button>
+            <h5>Location: @geolocationPosition.Coords.Latitude, @geolocationPosition.Coords.Longitude Accuracy: @geolocationPosition.Coords.Accuracy m</h5>
+
+            <button type="button" @onclick="UpdateAsync">Update Location</button>
+        }
     </MudContainer>
 
 @code 
@@ -79,6 +84,9 @@
 
     protected async Task UpdateAsync()
     {
+        geolocationPosition = null;
+        currentConditions = null;
+
         await GetLocationPositionAsync();
         await GetCurrentConditionsAsync();
     }
