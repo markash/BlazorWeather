@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Weather.Function
 {
@@ -18,9 +19,9 @@ namespace Weather.Function
             this._subscriptionKey = System.Environment.GetEnvironmentVariable("AZURE_MAPS_SUBSCRIPTION_KEY");
         }
 
-        public async Task<CurrentConditions> GetCurrentConditionsAsync(double latitude, double longitude)
+        public async Task<CurrentConditions> GetCurrentConditionsAsync(double latitude, double longitude, ILogger log)
         {
-            Trace.TraceInformation($"GetCurrentConditionsAsync({latitude},{longitude})");
+            log.LogInformation($"GetCurrentConditionsAsync({latitude},{longitude})");
 
             // var url = _baseUrl + Service.Weather.ToUri() + "/";
             // var httpClient = new HttpClient { BaseAddress = new Uri(url) };
@@ -45,13 +46,13 @@ namespace Weather.Function
                 Longitude = longitude.ToString(),
             };
 
-            var currentConditionsResponse = await request.GetResponseAsync();
+            var currentConditionsResponse = await request.GetResponseAsync(log);
             return currentConditionsResponse.Results[0];
         }
 
-        public async Task<SearchAddressReverseResult> GetMuncipalityAsync(double latitude, double longitude)
+        public async Task<SearchAddressReverseResult> GetMuncipalityAsync(double latitude, double longitude, ILogger log)
         {
-            Trace.TraceInformation($"GetMuncipality({latitude},{longitude})");
+            log.LogInformation($"GetMuncipality({latitude},{longitude})");
             
             var request = new SearchAddressReverseRequest(_baseUrl)
             {
@@ -61,7 +62,7 @@ namespace Weather.Function
                 EntityType = EntityType.Municipality
             };
 
-            var reverseSearchResponse = await request.GetResponseAsync();
+            var reverseSearchResponse = await request.GetResponseAsync(log);
             return reverseSearchResponse.Addresses[0];
 
             // var url = _baseUrl + "/";

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Weather.Function
 {
@@ -27,14 +28,14 @@ namespace Weather.Function
 
         abstract public string GetUrl();
 
-        public async Task<T> GetResponseAsync()
+        public async Task<T> GetResponseAsync(ILogger log)
         {
             var url = _baseUrl + _service.ToUri() + "/";
             var httpClient = new HttpClient { BaseAddress = new Uri(url) };
             var requestUrl = GetUrl();
 
             Console.WriteLine();
-            Trace.TraceInformation($"Remote call {url}{requestUrl}");
+            log.LogInformation($"Remote call {url}{requestUrl}");
 
             var httpResponse = await httpClient.GetAsync(requestUrl);
             if (httpResponse.IsSuccessStatusCode)
@@ -45,7 +46,7 @@ namespace Weather.Function
             {
                 string msg = await httpResponse.Content.ReadAsStringAsync();
                 Console.WriteLine(msg);
-                Trace.TraceError($"Remote call error {msg}");
+                log.LogError($"Remote call error {msg}");
 
                 throw new Exception(msg);
             }

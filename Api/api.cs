@@ -27,7 +27,10 @@ namespace Weather.Function
             latitude = latitude ?? data?.latitude;
             longitude = longitude ?? data?.longitude;
 
-            var currentConditions = await new WeatherService().GetCurrentConditionsAsync(Convert.ToDouble(latitude ?? "0"), Convert.ToDouble(longitude ?? "0"));
+            var currentConditions = await new WeatherService().GetCurrentConditionsAsync(
+                Convert.ToDouble(latitude ?? "0"), 
+                Convert.ToDouble(longitude ?? "0"),
+                log);
 
             return new OkObjectResult(currentConditions);
         }
@@ -47,7 +50,10 @@ namespace Weather.Function
             latitude = latitude ?? data?.latitude;
             longitude = longitude ?? data?.longitude;
 
-            var currentConditions = await new WeatherService().GetMuncipalityAsync(Convert.ToDouble(latitude ?? "0"), Convert.ToDouble(longitude ?? "0"));
+            var currentConditions = await new WeatherService().GetMuncipalityAsync(
+                Convert.ToDouble(latitude ?? "0"), 
+                Convert.ToDouble(longitude ?? "0"),
+                log);
 
             return new OkObjectResult(currentConditions);
         }
