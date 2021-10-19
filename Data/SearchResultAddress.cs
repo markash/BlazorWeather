@@ -2,7 +2,7 @@ using System;
 
 namespace Data
 {
-    public class SearchResultAddress
+    public class SearchResultAddress 
     {
         public string Country { get; set; }
         public string CountryCode { get; set; }
