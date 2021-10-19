@@ -4,8 +4,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-using Enums;
-
 namespace Weather.Function
 {
     public abstract class AbstractRequest<T>

@@ -1,5 +1,5 @@
 using System;
-using Enums;
+
 namespace Weather.Function
 {
     public class SearchAddressReverseRequest : AbstractRequest<ReverseSearchResponse>

@@ -4,7 +4,7 @@ namespace Weather.Function
 {
     public class CurrentConditionsRequest : AbstractRequest<CurrentConditionsResponse>
     {
-        public CurrentConditionsRequest(string baseUrl) : base(baseUrl, Enums.Service.Weather)
+        public CurrentConditionsRequest(string baseUrl) : base(baseUrl, Service.Weather)
         {
 
         }
