@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -34,7 +35,8 @@ namespace Weather.Function
             var httpClient = new HttpClient { BaseAddress = new Uri(url) };
             var requestUrl = GetUrl();
 
-            Console.WriteLine(url + requestUrl);
+            Console.WriteLine();
+            Trace.TraceInformation($"Remote call {url}{requestUrl}");
 
             var httpResponse = await httpClient.GetAsync(requestUrl);
             if (httpResponse.IsSuccessStatusCode)
@@ -45,6 +47,8 @@ namespace Weather.Function
             {
                 string msg = await httpResponse.Content.ReadAsStringAsync();
                 Console.WriteLine(msg);
+                Trace.TraceError($"Remote call error {msg}");
+
                 throw new Exception(msg);
             }
         }

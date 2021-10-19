@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Data;
 using Enums;
@@ -21,6 +22,8 @@ namespace Weather.Function
 
         public async Task<CurrentConditions> GetCurrentConditionsAsync(double latitude, double longitude)
         {
+            Trace.TraceInformation($"GetCurrentConditionsAsync({latitude},{longitude})");
+
             // var url = _baseUrl + Service.Weather.ToUri() + "/";
             // var httpClient = new HttpClient { BaseAddress = new Uri(url) };
             // var httpResponse = httpClient.GetAsync($"currentConditions/json?api-version=1.0&query={latitude},{longitude}&subscription-key={_subscriptionKey}");
@@ -50,6 +53,7 @@ namespace Weather.Function
 
         public async Task<SearchAddressReverseResult> GetMuncipalityAsync(double latitude, double longitude)
         {
+            Trace.TraceInformation($"GetMuncipality({latitude},{longitude})");
             
             var request = new SearchAddressReverseRequest(_baseUrl)
             {
