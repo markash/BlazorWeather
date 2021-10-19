@@ -28,6 +28,7 @@
         } 
         else
         {
+            <h3>@LocationAddress</h3>
             <img src="@IconImage" />
             <h2>@Temperature</h2>    
             <div>
@@ -47,6 +48,9 @@
     private WindowNavigatorGeolocation geolocation;
     private GeolocationPosition geolocationPosition;
     private CurrentConditions currentConditions;
+
+    private SearchResultAddress currentAddress;
+
     private string searchText;
 
     protected override async Task OnInitializedAsync() 
@@ -54,6 +58,7 @@
         await GetGeoLocationAsync();
         await GetLocationPositionAsync();
         await GetCurrentConditionsAsync();
+        await GetMuncipalityAsync();
     }
 
     protected async Task GetGeoLocationAsync()
@@ -80,6 +85,13 @@
         currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
     }
 
+    protected async Task GetMuncipalityAsync()
+    {
+        var searchAddressResult = await Http.GetFromJsonAsync<SearchAddressReverseResult>($"api/CurrentMuncipality?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+
+        currentAddress = searchAddressResult.Address;    
+    } 
+
     protected async Task UpdateAsync()
     {
         geolocationPosition = null;
@@ -94,9 +106,13 @@
         get => currentConditions == null ? $"images/weather_transparent/1.png" : $"images/weather_transparent/{currentConditions.IconCode}.png";
     }
 
+    protected string LocationAddress
+    {
+        get => currentAddress == null ? "Unknown" : $"{currentAddress.Municipality},{currentAddress.CountrySubdivision}";
+    }
     protected string Temperature
     {
-        get => currentConditions == null ? $"--.-{TemperatureUnit}" : $"{currentConditions.Temperature.Value}{TemperatureUnit}"; 
+        get => currentConditions == null ? $"--{TemperatureUnit}" : $"{Math.Round(currentConditions.Temperature.Value, 0)}{TemperatureUnit}"; 
     }
 
     private string TemperatureUnit

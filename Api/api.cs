@@ -31,5 +31,25 @@ namespace Weather.Function
 
             return new OkObjectResult(currentConditions);
         }
+
+        [FunctionName("CurrentMuncipality")]
+        public static async Task<IActionResult> CurrentMuncipality(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("Get current muncipality from latitude & longitude");
+
+            string latitude = req.Query["latitude"];
+            string longitude = req.Query["longitude"];
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            latitude = latitude ?? data?.latitude;
+            longitude = longitude ?? data?.longitude;
+
+            var currentConditions = await new WeatherService().GetMuncipalityAsync(Convert.ToDouble(latitude ?? "0"), Convert.ToDouble(longitude ?? "0"));
+
+            return new OkObjectResult(currentConditions);
+        }
     }
 }

@@ -4,6 +4,10 @@
     text-align: center;
 }
 
+#temperature .block {
+    display: inline-block;
+}
+
 #temperature h1 {
     display: table-cell;
     font-size: 5em;
