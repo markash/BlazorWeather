@@ -9,8 +9,8 @@ namespace Weather.Function
         public int IconCode { get; set;}
         public bool HasPrecipitation { get; set; }
         public bool IsDayTime { get; set; }
-        public Temperature Temperature { get; set; }
-        public Temperature RealFeelTemperature { get; set; }
-        public Temperature RealFeelTemperatureShade { get; set; }
+        public WeatherUnit Temperature { get; set; }
+        public WeatherUnit RealFeelTemperature { get; set; }
+        public WeatherUnit RealFeelTemperatureShade { get; set; }
     }
 }

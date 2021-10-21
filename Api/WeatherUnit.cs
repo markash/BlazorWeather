@@ -1,8 +1,8 @@
 using System;
 
-namespace Data
+namespace Weather.Function
 {
-    public class Temperature
+    public class WeatherUnit
     {
         public double Value { get; set; }
         public string Unit { get; set; }

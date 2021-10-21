@@ -35,6 +35,32 @@ namespace Weather.Function
             return new OkObjectResult(currentConditions);
         }
 
+        [FunctionName("DailyForecast")]
+        public static async Task<IActionResult> DailyForecast(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("Get daily forecast from latitude & longitude.");
+
+            string latitude = req.Query["latitude"];
+            string longitude = req.Query["longitude"];
+            string duration = req.Query["duration"];
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            latitude = latitude ?? data?.latitude;
+            longitude = longitude ?? data?.longitude;
+            duration = duration ?? data?.duration;
+
+            var currentConditions = await new WeatherService().GetDailyForecastAsync(
+                Convert.ToDouble(latitude ?? "0"), 
+                Convert.ToDouble(longitude ?? "0"),
+                Convert.ToInt16(duration),    
+                log);
+
+            return new OkObjectResult(currentConditions);
+        }
+
         [FunctionName("CurrentMuncipality")]
         public static async Task<IActionResult> CurrentMuncipality(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,

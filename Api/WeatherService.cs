@@ -23,22 +23,6 @@ namespace Weather.Function
         {
             log.LogInformation($"GetCurrentConditionsAsync({latitude},{longitude})");
 
-            // var url = _baseUrl + Service.Weather.ToUri() + "/";
-            // var httpClient = new HttpClient { BaseAddress = new Uri(url) };
-            // var httpResponse = httpClient.GetAsync($"currentConditions/json?api-version=1.0&query={latitude},{longitude}&subscription-key={_subscriptionKey}");
-
-            // if (httpResponse.IsCompletedSuccessfully)
-            // {
-            //     var response = await httpResponse.Result.Content.ReadFromJsonAsync<CurrentConditionsResponse>();
-            //     return response.Results[0];
-            // }
-            // else
-            // {
-            //     string msg = await httpResponse.Result.Content.ReadAsStringAsync();
-            //     Console.WriteLine(msg);
-            //     throw new Exception(msg);
-            // } 
-
             var request = new CurrentConditionsRequest(_baseUrl)
             {
                 SubscriptionKey = _subscriptionKey,
@@ -48,6 +32,21 @@ namespace Weather.Function
 
             var currentConditionsResponse = await request.GetResponseAsync(log);
             return currentConditionsResponse.Results[0];
+        }
+
+        public async Task<DailyForecastResponse> GetDailyForecastAsync(double latitude, double longitude, Int16 duration, ILogger log)
+        {
+            log.LogInformation($"GetDailyForecastAsync({latitude},{longitude})");
+
+            var request = new DailyForecastRequest(_baseUrl)
+            {
+                SubscriptionKey = _subscriptionKey,
+                Latitude = latitude.ToString(),
+                Longitude = longitude.ToString(),
+                Duration = duration
+            };
+
+            return await request.GetResponseAsync(log);
         }
 
         public async Task<SearchAddressReverseResult> GetMuncipalityAsync(double latitude, double longitude, ILogger log)
@@ -64,36 +63,6 @@ namespace Weather.Function
 
             var reverseSearchResponse = await request.GetResponseAsync(log);
             return reverseSearchResponse.Addresses[0];
-
-            // var url = _baseUrl + "/";
-            // var httpClient = new HttpClient { BaseAddress = new Uri(url) };
-            // var response = await httpClient.GetFromJsonAsync<ReverseSearchResponse>(request.ToUri);
-            // return response.Addresses[0];
         }
-    }
-
-    
-    public class CurrentConditionsResponse 
-    {
-        public CurrentConditions[] Results { get; set; }
     } 
-    
-    public class Temperature
-    {
-        public double Value { get; set; }
-        public string Unit { get; set; }
-        public int UnitType { get; set; } 
-    }
-
-    // public class CurrentConditions
-    // {
-    //     public DateTime DateTime {get; set; }
-    //     public string Phrase { get; set;}
-    //     public int IconCode { get; set;}
-    //     public bool HasPrecipitation { get; set; }
-    //     public bool IsDayTime { get; set; }
-    //     public Temperature Temperature { get; set; }
-    //     public Temperature RealFeelTemperature { get; set; }
-    //     public Temperature RealFeelTemperatureShade { get; set; }
-    // }
 }

@@ -2,7 +2,7 @@
 @using BrowserInterop.Extensions;
 @using BrowserInterop.Geolocation;
 
-@using Data;
+@using Weather.Function;
 @using System.Net.Http
 @using System.Net.Http.Json
 @using System.Threading.Tasks
@@ -19,7 +19,7 @@
         </AppContextMenu>
     </LayoutSetter>
 
-    <img src="images/wallpaper/black_white_raindrop_leaf.jpg" class="bg">
+    <img src="images/wallpaper/minimal-night-sky.jpg" class="bg">
 
     <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Lighten4};")">
         @if (currentConditions == null)
@@ -41,75 +41,26 @@
             <button type="button" @onclick="UpdateAsync">Update Location</button>
 
             <MudList Clickable="true">
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7" style="text-align: left; vertical-align: middle;">
-                            <div style="padding-top: 10px;">Tomorrow, Oct 22</div>
-                        </MudItem>
-                        <MudItem xs="3" style="text-align: center;">
-                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
-                        </MudItem>
-                        <MudItem xs="2" style="text-align: right;">
-                            <div style="padding-top: 10px;">23</div>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
-                <MudDivider />
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7" style="text-align: left; vertical-align: middle;">
-                            <div style="padding-top: 10px;">Sat, Oct 23</div>
-                        </MudItem>
-                        <MudItem xs="3" style="text-align: center;">
-                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
-                        </MudItem>
-                        <MudItem xs="2" style="text-align: right;">
-                            <div style="padding-top: 10px;">23</div>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
-                <MudDivider />
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7" style="text-align: left; vertical-align: middle;">
-                            <div style="padding-top: 10px;">Sun, Oct 24</div>
-                        </MudItem>
-                        <MudItem xs="3" style="text-align: center;">
-                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
-                        </MudItem>
-                        <MudItem xs="2" style="text-align: right;">
-                            <div style="padding-top: 10px;">23</div>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
-                <MudDivider />
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7" style="text-align: left; vertical-align: middle;">
-                            <div style="padding-top: 10px;">Mon, Oct 25</div>
-                        </MudItem>
-                        <MudItem xs="3" style="text-align: center;">
-                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
-                        </MudItem>
-                        <MudItem xs="2" style="text-align: right;">
-                            <div style="padding-top: 10px;">23</div>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
-                <MudDivider />
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7" style="text-align: left; vertical-align: middle;">
-                            <div style="padding-top: 10px;">Tue, Oct 26</div>
-                        </MudItem>
-                        <MudItem xs="3" style="text-align: center;">
-                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
-                        </MudItem>
-                        <MudItem xs="2" style="text-align: right;">
-                            <div style="padding-top: 10px;">23</div>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
+                @if (dailyForecasts != null)
+                {
+                    @foreach(var forecastItem in dailyForecasts)
+                    {
+                        <MudListItem>
+                            <MudGrid>
+                                <MudItem xs="7" style="text-align: left; vertical-align: middle;">
+                                    <div style="padding-top: 10px;">@forecastItem.DateText</div>
+                                </MudItem>
+                                <MudItem xs="3" style="text-align: center;">
+                                    <MudAvatar Square="true" Variant="Variant.Outlined" Image="@forecastItem.IconImage" />
+                                </MudItem>
+                                <MudItem xs="2" style="text-align: right;">
+                                    <div style="padding-top: 10px;">23</div>
+                                </MudItem>
+                            </MudGrid>
+                        </MudListItem>
+                        <MudDivider />
+                    }
+                }
             </MudList>
 
 
@@ -120,8 +71,8 @@
     private WindowNavigatorGeolocation geolocation;
     private GeolocationPosition geolocationPosition;
     private CurrentConditions currentConditions;
-
     private SearchResultAddress currentAddress;
+    private IList<ForecastItem> dailyForecasts = new List<ForecastItem>();
 
     //private string searchText;
 
@@ -131,6 +82,7 @@
         await GetLocationPositionAsync();
         await GetCurrentConditionsAsync();
         await GetMuncipalityAsync();
+        await GetDailyForecastAsync();
     }
 
     protected async Task GetGeoLocationAsync()
@@ -164,6 +116,39 @@
         currentAddress = searchAddressResult.Address;    
     } 
 
+    protected async Task GetDailyForecastAsync()
+    {
+        var duration = 10;
+        var dailyForecastResponse = await Http.GetFromJsonAsync<DailyForecastResponse>($"api/DailyForecast?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}&duration={duration}");
+
+        dailyForecasts.Clear();
+
+        if (dailyForecastResponse != null)
+        {
+            var forecastNumber = 6;
+            var forecastCount = 0;
+
+            foreach (var forecast in dailyForecastResponse.Forecasts)
+            {
+                var forecastItem = new ForecastItem
+                {
+                    Date = forecast.Date,
+                    IconCode = forecast.Day.IconCode
+                };
+
+                dailyForecasts.Add(forecastItem);
+
+                forecastCount++;
+
+                if (forecastCount > forecastNumber)
+                    break;
+            }
+
+            //Remove the first forecast because that is for today
+            dailyForecasts.RemoveAt(0);
+        }    
+    }
+
     protected async Task UpdateAsync()
     {
         geolocationPosition = null;
@@ -171,6 +156,8 @@
 
         await GetLocationPositionAsync();
         await GetCurrentConditionsAsync();
+        await GetMuncipalityAsync();
+        await GetDailyForecastAsync();
     }
 
     protected string IconImage
@@ -200,5 +187,30 @@
     protected string UpdatedDateTime
     {
         get => $"Updated as of {(currentConditions ?? new CurrentConditions()).DateTime:HH:mm}";
+    }
+
+    sealed class ForecastItem
+    {
+        public DateTime Date { get; set; }
+
+        public Int32 IconCode { get; set; }
+
+        public WeatherUnitRange Temperature { get; set; }
+
+        public string DateText
+        {
+            get 
+            {
+                var dateText = this.Date.ToString("MMM dd");
+                var dayOfWeek = this.Date.ToString("ddd");
+
+                return (DateTime.Now.AddDays(1).Date.Equals(this.Date.Date)) ? $"Tomorrow, {dateText}" : $"{dayOfWeek}, {dateText}";
+            }
+        }
+
+        public string IconImage
+        {
+            get => $"images/weather_transparent/{IconCode}.png";
+        }
     }
 }
