@@ -121,3 +121,5 @@ local.setting*.json
 
 **/bin/**/*.*
 **/obj/**/*.*
+.vs/BlazorWeather/DesignTimeBuild/.dtbcache.v2
+.vs/BlazorWeather/v16/.suo
