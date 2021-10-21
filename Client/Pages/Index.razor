@@ -38,9 +38,81 @@
                 <span>@UpdatedDateTime</span>
             </div>
 
-            <h5>Location: @geolocationPosition.Coords.Latitude, @geolocationPosition.Coords.Longitude Accuracy: @geolocationPosition.Coords.Accuracy m</h5>
-
             <button type="button" @onclick="UpdateAsync">Update Location</button>
+
+            <MudList Clickable="true">
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="4" style="text-align: left; vertical-align: middle;">
+                            <div style="padding-top: 10px;">Tomorrow, Oct 22</div>
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: center;">
+                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: right;">
+                            <div style="padding-top: 10px;">23</div>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+                <MudDivider />
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="4" style="text-align: left; vertical-align: middle;">
+                            <div style="padding-top: 10px;">Sat, Oct 23</div>
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: center;">
+                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: right;">
+                            <div style="padding-top: 10px;">23</div>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+                <MudDivider />
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="4" style="text-align: left; vertical-align: middle;">
+                            <div style="padding-top: 10px;">Sun, Oct 24</div>
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: center;">
+                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: right;">
+                            <div style="padding-top: 10px;">23</div>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+                <MudDivider />
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="4" style="text-align: left; vertical-align: middle;">
+                            <div style="padding-top: 10px;">Mon, Oct 25</div>
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: center;">
+                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: right;">
+                            <div style="padding-top: 10px;">23</div>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+                <MudDivider />
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="4" style="text-align: left; vertical-align: middle;">
+                            <div style="padding-top: 10px;">Tue, Oct 26</div>
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: center;">
+                            <MudAvatar Square="true" Variant="Variant.Outlined" Image="@IconImage" />
+                        </MudItem>
+                        <MudItem xs="4" style="text-align: right;">
+                            <div style="padding-top: 10px;">23</div>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+            </MudList>
+
+
         }
     </MudContainer>
 @code 
@@ -51,7 +123,7 @@
 
     private SearchResultAddress currentAddress;
 
-    private string searchText;
+    //private string searchText;
 
     protected override async Task OnInitializedAsync() 
     {
