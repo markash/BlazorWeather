@@ -4,20 +4,38 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Weather.Function;
 
-namespace Client
+namespace Client.Services
 {
     public class WeatherService
     {
-        public async Task<CurrentConditions> GetCurrentConditionsAsync(double latitude, double longitude)
+        private readonly HttpClient httpClient;
+
+        public WeatherService(HttpClient httpClient)
         {
-            var httpClient = new HttpClient { BaseAddress = new Uri("https://atlas.microsoft.com/weather/") };
-            var response = await httpClient.GetFromJsonAsync<CurrentConditionsResponse>("currentConditions/json?api-version=1.0&query=-26.042754499999997,28.217563&subscription-key=");
-            return response.Results[0];
+            this.httpClient = httpClient;
+        }
+
+        public async Task<WeatherForecast> GetWeatherForecastAsync(Location location)
+        {
+            var currentConditions = await httpClient.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@location.Latitude}&longitude={@location.Longitude}");
+            var searchAddressResult = await httpClient.GetFromJsonAsync<SearchAddressReverseResult>($"api/CurrentMuncipality?latitude={@location.Latitude}&longitude={@location.Longitude}");
+            var currentAddress = searchAddressResult.Address;
+
+            location.Municipality = currentAddress.Municipality;
+            location.CountrySubdivision = currentAddress.CountrySubdivision;
+
+            return new WeatherForecast
+            {
+                Location = location,
+                DateTime = currentConditions.DateTime,
+                IconCode = currentConditions.IconCode,
+                IsDayTime = currentConditions.IsDayTime,
+                Phrase = currentConditions.Phrase,
+                HasPrecipitation = currentConditions.HasPrecipitation,
+                Temperature = currentConditions.Temperature,
+                RealFeelTemperature = currentConditions.RealFeelTemperature,
+                RealFeelTemperatureShade = currentConditions.RealFeelTemperatureShade
+            };
         }
     }
-
-    public class CurrentConditionsResponse 
-    {
-        public CurrentConditions[] Results { get; set; }
-    } 
 }
