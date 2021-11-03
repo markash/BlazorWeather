@@ -1,6 +1,6 @@
 {
-    "name": "ComponentsWebAssembly-CSharp",
-    "short_name": "ComponentsWebAssembly-CSharp",
+    "name": "Micro Weather",
+    "short_name": "Micro Weather",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",
