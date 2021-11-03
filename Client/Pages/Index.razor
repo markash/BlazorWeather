@@ -78,11 +78,7 @@
 
     protected override async Task OnInitializedAsync() 
     {
-        await GetGeoLocationAsync();
-        await GetLocationPositionAsync();
-        await GetCurrentConditionsAsync();
-        await GetMuncipalityAsync();
-        await GetDailyForecastAsync();
+        await UpdateAsync();
     }
 
     protected async Task GetGeoLocationAsync()
@@ -175,6 +171,7 @@
         geolocationPosition = null;
         currentConditions = null;
 
+        await GetGeoLocationAsync();
         await GetLocationPositionAsync();
         await GetCurrentConditionsAsync();
         await GetMuncipalityAsync();
