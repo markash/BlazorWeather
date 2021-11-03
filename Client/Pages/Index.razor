@@ -106,47 +106,68 @@
 
     protected async Task GetCurrentConditionsAsync()
     {
-        currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        try 
+        {
+            currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        }
+        catch(HttpRequestException e)
+        {
+            Console.WriteLine($"GetCurrentConditionsAsync {e.Source} - {e.Message}");
+        }
     }
 
     protected async Task GetMuncipalityAsync()
     {
-        var searchAddressResult = await Http.GetFromJsonAsync<SearchAddressReverseResult>($"api/CurrentMuncipality?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
+        try
+        {
+            var searchAddressResult = await Http.GetFromJsonAsync<SearchAddressReverseResult>($"api/CurrentMuncipality?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
 
-        currentAddress = searchAddressResult.Address;    
+            currentAddress = searchAddressResult.Address;    
+        }
+        catch(HttpRequestException e)
+        {
+            Console.WriteLine($"GetMuncipalityAsync {e.Source} - {e.Message}");
+        }
     } 
 
     protected async Task GetDailyForecastAsync()
     {
-        var duration = 10;
-        var dailyForecastResponse = await Http.GetFromJsonAsync<DailyForecastResponse>($"api/DailyForecast?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}&duration={duration}");
-
-        dailyForecasts.Clear();
-
-        if (dailyForecastResponse != null)
+        try
         {
-            var forecastNumber = 6;
-            var forecastCount = 0;
+            var duration = 10;
+            var dailyForecastResponse = await Http.GetFromJsonAsync<DailyForecastResponse>($"api/DailyForecast?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}&duration={duration}");
 
-            foreach (var forecast in dailyForecastResponse.Forecasts)
+            dailyForecasts.Clear();
+
+            if (dailyForecastResponse != null)
             {
-                var forecastItem = new ForecastItem
+                var forecastNumber = 6;
+                var forecastCount = 0;
+
+                foreach (var forecast in dailyForecastResponse.Forecasts)
                 {
-                    Date = forecast.Date,
-                    IconCode = forecast.Day.IconCode
-                };
+                    var forecastItem = new ForecastItem
+                    {
+                        Date = forecast.Date,
+                        IconCode = forecast.Day.IconCode
+                    };
 
-                dailyForecasts.Add(forecastItem);
+                    dailyForecasts.Add(forecastItem);
 
-                forecastCount++;
+                    forecastCount++;
 
-                if (forecastCount > forecastNumber)
-                    break;
-            }
+                    if (forecastCount > forecastNumber)
+                        break;
+                }
 
-            //Remove the first forecast because that is for today
-            dailyForecasts.RemoveAt(0);
-        }    
+                //Remove the first forecast because that is for today
+                dailyForecasts.RemoveAt(0);
+            }    
+        }
+        catch(HttpRequestException e)
+        {
+            Console.WriteLine($"GetDailyForecastAsync {e.Source} - {e.Message}");
+        }
     }
 
     protected async Task UpdateAsync()
