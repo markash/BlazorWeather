@@ -48,7 +48,7 @@ async function onFetch(event) {
             && !event.request.url.includes('/connect/')
             && !event.request.url.includes('/Identity/');
 //#else
-        const shouldServeIndexHtml = event.request.mode === 'navigate';
+        // const shouldServeIndexHtml = event.request.mode === 'navigate';
 //#endif
 
         const request = shouldServeIndexHtml ? 'index.html' : event.request;
