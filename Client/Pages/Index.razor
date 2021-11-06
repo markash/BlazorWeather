@@ -2,14 +2,13 @@
 @using BrowserInterop.Extensions;
 @using BrowserInterop.Geolocation;
 
-@using Weather.Function;
+
 @using System.Net.Http
-@using System.Net.Http.Json
 @using System.Threading.Tasks
 @inject HttpClient Http
 
 @using Client.Services;
-@inject WeatherService weatherService;
+@inject WeatherForecastService weatherService;
 
 @page "/"
 
@@ -41,9 +40,9 @@
             <button type="button" @onclick="UpdateAsync">Update Location</button>
 
             <MudList Clickable="true">
-                @if (dailyForecasts != null)
+                @if (weatherForecast.DailyForecasts != null)
                 {
-                    @foreach(var forecastItem in dailyForecasts)
+                    @foreach(var forecastItem in weatherForecast.DailyForecasts)
                     {
                         <MudListItem>
                             <MudGrid>
@@ -70,11 +69,7 @@
 {
     private WindowNavigatorGeolocation geolocation;
     private Location location;
-    //private CurrentConditions currentConditions;
-    //private SearchResultAddress currentAddress;
     private WeatherForecast weatherForecast;
-    private IList<ForecastItem> dailyForecasts = new List<ForecastItem>();
-
     //private string searchText;
 
     protected override async Task OnInitializedAsync() 
@@ -107,76 +102,9 @@
         };
     }
 
-    @* protected async Task GetCurrentConditionsAsync()
-    {
-        try 
-        {
-            currentConditions = await Http.GetFromJsonAsync<CurrentConditions>($"api/CurrentConditions?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
-        }
-        catch(HttpRequestException e)
-        {
-            Console.WriteLine($"GetCurrentConditionsAsync {e.Source} - {e.Message}");
-        }
-    }
-
-    protected async Task GetMuncipalityAsync()
-    {
-        try
-        {
-            var searchAddressResult = await Http.GetFromJsonAsync<SearchAddressReverseResult>($"api/CurrentMuncipality?latitude={@geolocationPosition.Coords.Latitude}&longitude={@geolocationPosition.Coords.Longitude}");
-
-            currentAddress = searchAddressResult.Address;    
-        }
-        catch(HttpRequestException e)
-        {
-            Console.WriteLine($"GetMuncipalityAsync {e.Source} - {e.Message}");
-        }
-    }  *@
-
-
     protected async Task GetWeatherForecastAsync()
     {
         weatherForecast = await weatherService.GetWeatherForecastAsync(location);
-    }
-
-    protected async Task GetDailyForecastAsync()
-    {
-        try
-        {
-            var duration = 10;
-            var dailyForecastResponse = await Http.GetFromJsonAsync<DailyForecastResponse>($"api/DailyForecast?latitude={@location.Latitude}&longitude={@location.Longitude}&duration={duration}");
-
-            dailyForecasts.Clear();
-
-            if (dailyForecastResponse != null)
-            {
-                var forecastNumber = 6;
-                var forecastCount = 0;
-
-                foreach (var forecast in dailyForecastResponse.Forecasts)
-                {
-                    var forecastItem = new ForecastItem
-                    {
-                        Date = forecast.Date,
-                        IconCode = forecast.Day.IconCode
-                    };
-
-                    dailyForecasts.Add(forecastItem);
-
-                    forecastCount++;
-
-                    if (forecastCount > forecastNumber)
-                        break;
-                }
-
-                //Remove the first forecast because that is for today
-                dailyForecasts.RemoveAt(0);
-            }    
-        }
-        catch(HttpRequestException e)
-        {
-            Console.WriteLine($"GetDailyForecastAsync {e.Source} - {e.Message}");
-        }
     }
 
     protected async Task UpdateAsync()
@@ -186,63 +114,6 @@
 
         await GetGeoLocationAsync();
         await GetLocationPositionAsync();
-        //await GetCurrentConditionsAsync();
-        //await GetMuncipalityAsync();
         await GetWeatherForecastAsync();
-        await GetDailyForecastAsync();
-    }
-
-    @* protected string IconImage
-    {
-        get => currentConditions == null ? $"images/weather_transparent/1.png" : $"images/weather_transparent/{currentConditions.IconCode}.png";
-    }
-
-    protected string LocationAddress
-    {
-        get => currentAddress == null ? "Unknown" : $"{currentAddress.Municipality},{currentAddress.CountrySubdivision}";
-    }
-    protected string Temperature
-    {
-        get => currentConditions == null ? $"--{TemperatureUnit}" : $"{Math.Round(currentConditions.Temperature.Value, 0)}{TemperatureUnit}"; 
-    }
-
-    private string TemperatureUnit
-    {
-        get => "\u2103";
-    }
-
-    protected string Phrase
-    {
-        get => currentConditions == null ? "--------------------" : $"{currentConditions.Phrase}";
-    }
-
-    protected string UpdatedDateTime
-    {
-        get => $"Updated as of {(currentConditions ?? new CurrentConditions()).DateTime:HH:mm}";
-    } *@
-
-    sealed class ForecastItem
-    {
-        public DateTime Date { get; set; }
-
-        public Int32 IconCode { get; set; }
-
-        public WeatherUnitRange Temperature { get; set; }
-
-        public string DateText
-        {
-            get 
-            {
-                var dateText = this.Date.ToString("MMM dd");
-                var dayOfWeek = this.Date.ToString("ddd");
-
-                return (DateTime.Now.AddDays(1).Date.Equals(this.Date.Date)) ? $"Tomorrow, {dateText}" : $"{dayOfWeek}, {dateText}";
-            }
-        }
-
-        public string IconImage
-        {
-            get => $"images/weather_transparent/{IconCode}.png";
-        }
     }
 }

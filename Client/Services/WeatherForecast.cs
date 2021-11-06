@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using Weather.Function;
 
 namespace Client.Services
 {
     public class WeatherForecast
     {
+        public long? Id { get; set; }
         public Location Location { get; set; }
+        public DailyWeatherForecast[] DailyForecasts { get; set; }
         public DateTime DateTime {get; set; }
         public string Phrase { get; set;}
         public int IconCode { get; set;}

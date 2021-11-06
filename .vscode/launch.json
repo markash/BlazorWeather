@@ -5,13 +5,21 @@
             "name": "Launch and Debug Standalone Blazor WebAssembly App",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/Client"
+            "cwd": "${workspaceFolder}/Client",
+            "browser": "chrome",
+            "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
         },
         {
             "name": "Attach to .NET Functions",
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:azureFunctions.pickProcess}"
+        },
+        {
+            "name": "Attach Standalone Blazor WebAssembly App",
+            "type": "blazorwasm",
+            "request": "attach",
+            "url": "http://localhost:5000"
         }
     ]
 }
