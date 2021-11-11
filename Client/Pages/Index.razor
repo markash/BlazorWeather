@@ -14,7 +14,7 @@
 
     <LayoutSetter>
         <AppContextMenu>
-            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Color="Color.Inherit" Edge="Edge.End" @onclick="UpdateAsync" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Color="Color.Inherit" Edge="Edge.End" @onclick="OnClickUpdateAsync" />
         </AppContextMenu>
     </LayoutSetter>
 
@@ -37,7 +37,7 @@
                 <span>@weatherForecast.UpdatedDateTime</span>
             </div>
 
-            <button type="button" @onclick="UpdateAsync">Update Location</button>
+            <button type="button" @onclick="OnClickUpdateAsync">Update Location</button>
 
             <MudList Clickable="true">
                 @if (weatherForecast.DailyForecasts != null)
@@ -72,9 +72,13 @@
     private WeatherForecast weatherForecast;
     //private string searchText;
 
+    
     protected override async Task OnInitializedAsync() 
     {
-        await UpdateAsync();
+        // Try to load the weather forecast from the local
+        // data store and fallback to fecthing from Azure
+        // if not found
+        await UpdateAsync(ServiceLocation.LOCAL);
     }
 
     protected async Task GetGeoLocationAsync()
@@ -102,18 +106,25 @@
         };
     }
 
-    protected async Task GetWeatherForecastAsync()
+    protected async Task GetWeatherForecastAsync(ServiceLocation serviceLocation)
     {
-        weatherForecast = await weatherService.GetWeatherForecastAsync(location);
+        weatherForecast = await weatherService.GetWeatherForecastAsync(location, serviceLocation);
     }
 
-    protected async Task UpdateAsync()
+
+    protected async Task OnClickUpdateAsync()
+    {
+        // Fetch the weather forecast from Azure
+        await UpdateAsync(ServiceLocation.AZURE);
+    }
+
+    private async Task UpdateAsync(ServiceLocation serviceLocation)
     {
         location = null;
         weatherForecast = null;
 
         await GetGeoLocationAsync();
         await GetLocationPositionAsync();
-        await GetWeatherForecastAsync();
+        await GetWeatherForecastAsync(serviceLocation);
     }
 }

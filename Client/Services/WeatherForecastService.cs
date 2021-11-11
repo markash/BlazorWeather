@@ -36,7 +36,24 @@ namespace Client.Services
             return locations.FirstOrDefault();
         }
 
-        public async Task<WeatherForecast> GetWeatherForecastAsync(Location location)
+        public async Task<WeatherForecast> GetWeatherForecastAsync(Location location, ServiceLocation serviceLocation)
+        {
+            WeatherForecast weatherForecast = null;
+
+            if (serviceLocation == ServiceLocation.LOCAL) 
+            {
+                weatherForecast = (await GetLocalWeatherForecastByLocationAsync(location))?.FirstOrDefault();
+            }
+
+            if (weatherForecast == null)
+            {
+                weatherForecast = await GetAzureWeatherForecastAsync(location);
+            }
+
+            return weatherForecast;
+        }
+
+        private async Task<WeatherForecast> GetAzureWeatherForecastAsync(Location location)
         {
             try
             {
@@ -71,7 +88,7 @@ namespace Client.Services
             {
                 Console.WriteLine($"Unable to read weatherforecast for location ({location?.Latitude}, {location?.Longitude})");
 
-                var weatherForecasts = await ReadWeatherForecastByLocationAsync(location);
+                var weatherForecasts = await GetLocalWeatherForecastByLocationAsync(location);
 
                 return weatherForecasts?.FirstOrDefault();
             }
@@ -85,7 +102,7 @@ namespace Client.Services
                 return await httpClient.GetFromJsonAsync<CurrentConditions>
                     (
                                 $"api/CurrentConditions?latitude={@location.Latitude}&longitude={@location.Longitude}",
-                                new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token
+                                new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
                     );
             } 
             catch (OperationCanceledException)
@@ -105,7 +122,7 @@ namespace Client.Services
                     await httpClient.GetFromJsonAsync<SearchAddressReverseResult>
                     (
                         $"api/CurrentMuncipality?latitude={@location.Latitude}&longitude={@location.Longitude}",
-                        new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token
+                        new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
                     );
 
                 return searchAddressResult.Address;
@@ -132,7 +149,7 @@ namespace Client.Services
                     await httpClient.GetFromJsonAsync<DailyForecastResponse>
                     (
                         $"api/DailyForecast?latitude={@location.Latitude}&longitude={@location.Longitude}&duration=10",
-                        new CancellationTokenSource(TimeSpan.FromSeconds(2)).Token
+                        new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
                     );
 
                 var dailyForecasts = dailyForecastResult.Forecasts;
@@ -187,7 +204,7 @@ namespace Client.Services
             await indexedDbManager.AddRecord(newRecord);
         }
 
-        private async Task<List<WeatherForecast>> ReadWeatherForecastByLocationAsync(Location location)
+        private async Task<List<WeatherForecast>> GetLocalWeatherForecastByLocationAsync(Location location)
         {
             var results = await indexedDbManager.GetRecords<WeatherForecast>(Stores.STORE_WEATHER_FORECASTS);
 
