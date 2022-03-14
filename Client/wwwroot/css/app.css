@@ -18,6 +18,10 @@
     font-size: 5em;
 }
 
+#temperature lottie-player {
+    display: inline-block;
+}
+
 #temperature img {
     display: inline-block;
 }
@@ -26,23 +30,32 @@
     display: table-row;
 }
 
-img.bg {
-    /* Set rules to fill background */
-    min-height: 100%;
-    min-width: 1024px;
-      
+lottie-player.bg {
     /* Set up proportionate scaling */
     width: 100%;
     height: auto;
-      
     /* Set up positioning */
     position: fixed;
     top: 0;
     left: 0;
-
     /* At the bottom of the visual stack */
     z-index: -1;
-  }
+}
+
+img.bg {
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* At the bottom of the visual stack */
+    z-index: -1;
+}
   
   @media screen and (max-width: 1024px) { /* Specific to this particular image */
     img.bg {

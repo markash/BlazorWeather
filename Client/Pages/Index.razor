@@ -18,9 +18,9 @@
         </AppContextMenu>
     </LayoutSetter>
 
-    <img src="images/wallpaper/forest-night.jpg" class="bg"> 
-
-    <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Lighten4};")">
+    <lottie-player class="bg" src="images/wallpaper/lf20_boJRmE.json" background="transparent" speed="1" loop autoplay></lottie-player>
+    
+    <MudContainer id="temperature" MaxWidth="MaxWidth.Small" Style="@($"color:{Colors.Grey.Darken4};")">
         @if (weatherForecast == null)
         {
             <MudProgressCircular Color="Color.Default" Indeterminate="true"  />
@@ -28,6 +28,7 @@
         else
         {
             <h3>@weatherForecast.LocationAddress</h3>
+            <lottie-player src="@weatherForecast.LottieFile"  background="transparent"  speed="1"  style="width: 48px; height: 48px; display: inline-block" loop autoplay></lottie-player>
             <img src="@weatherForecast.IconImage" />
             <h2>@weatherForecast.TemperatureReading</h2>    
             <div>

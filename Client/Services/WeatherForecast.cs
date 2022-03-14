@@ -23,6 +23,11 @@ namespace Client.Services
             get => $"images/weather_transparent/{IconCode}.png";
         }
 
+        public string LottieFile
+        {
+            get => $"images/lottiefiles/{IconCode}.json";
+        }
+
         public string LocationAddress
         {
             get => Location == null ? "Unknown" : $"{Location.Municipality},{Location.CountrySubdivision}";
